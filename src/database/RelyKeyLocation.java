@@ -7,16 +7,16 @@ package database;
  * @author AtoshDustosh
  */
 public class RelyKeyLocation {
-  private int relyRelationSerialNum = 0;
+  private String relyRelationName = null;
   private int relyKeyAttributeIndex = 0;
 
-  public RelyKeyLocation(int relyRelationSerialNum, int relyKeyAttributeIndex) {
-    this.relyRelationSerialNum = relyRelationSerialNum;
+  public RelyKeyLocation(String relyRelationName, int relyKeyAttributeIndex) {
+    this.relyRelationName = relyRelationName;
     this.relyKeyAttributeIndex = relyKeyAttributeIndex;
   }
 
-  public int getRelyRelationSerialNum() {
-    return this.relyRelationSerialNum;
+  public String getRelyRelationNamem() {
+    return this.relyRelationName;
   }
 
   public int getRelyKeyAttributeIndex() {

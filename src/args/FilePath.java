@@ -11,4 +11,8 @@ public enum FilePath {
     this.filePath = filePath;
   }
 
+  public String getPath() {
+    return this.filePath;
+  }
+
 }
