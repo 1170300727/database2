@@ -17,13 +17,14 @@ public class Relation {
   private int attributeNum = 0;
   private int primaryKeyNum = 0;
 
-  /*
-   * \TODO add field "private List<String> attributeNameList"
-   */
+  private List<String> attributeNameList = new ArrayList<>();
+
+  private List<RelyKeyLocation> relies = new ArrayList<>();
 
   /*
-   * We use Map<String, Tuple> to locate a tuple quickly. The key "String" of it
-   * is converted using primary key attributes of "Tuple" as tupleKey.
+   * We use Map<String, Tuple> to locate a tuple quickly. The key 
+   * "String" of it is converted using primary key attributes of 
+   * "Tuple" as tupleKey.
    */
   private Map<String, Tuple> tuples = new HashMap<String, Tuple>();
 
@@ -31,6 +32,14 @@ public class Relation {
     this.relationName = name;
     this.attributeNum = attributeNum;
     this.primaryKeyNum = primaryKeyNum;
+  }
+
+  public void addAttributeName(String attributeName) {
+    this.attributeNameList.add(attributeName);
+  }
+
+  public void addRely(RelyKeyLocation rely) {
+    this.relies.add(rely);
   }
 
   /**
@@ -49,6 +58,10 @@ public class Relation {
     for (int i = 0; i < this.primaryKeyNum; i++) {
       primaryKeyAttributeList.add(newTuple.getAttribute(i));
     }
+    /*
+     * convert the primary keys of the tuple into a string and 
+     * use it as the tuple's key
+     */
     String tupleKey = primaryKeyAttributeList.toString();
     this.tuples.put(tupleKey, newTuple);
     return 0;
@@ -64,6 +77,10 @@ public class Relation {
 
   public int getPrimaryKeyNum() {
     return this.primaryKeyNum;
+  }
+
+  public int getReliesNum() {
+    return this.relies.size();
   }
 
   public Set<String> getTupleKeySet() {
