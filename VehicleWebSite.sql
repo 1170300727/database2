@@ -217,4 +217,3 @@ CREATE VIEW AllEvaluationsofAllVehicleTypes AS SELECT * FROM VehicleType NATURAL
 CREATE VIEW RepliesofAllWorks AS SELECT * FROM Works NATURAL JOIN WorksReply;
 
 CREATE VIEW VehicleTypeAVGScore AS SELECT DISTINCT `vehicle_type_id`, AVG(`score`) `avg_score` FROM VehicleType NATURAL join VehicleEvaluation GROUP BY vehicle_type_id ;
-

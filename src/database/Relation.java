@@ -63,8 +63,12 @@ public class Relation {
      * use it as the tuple's key
      */
     String tupleKey = primaryKeyAttributeList.toString();
-    this.tuples.put(tupleKey, newTuple);
-    return 0;
+    if (this.tuples.keySet().contains(tupleKey)) {
+      return 1;
+    } else {
+      this.tuples.put(tupleKey, newTuple);
+      return 0;
+    }
   }
 
   public String getRelationName() {
@@ -81,6 +85,26 @@ public class Relation {
 
   public int getReliesNum() {
     return this.relies.size();
+  }
+
+  public List<RelyKeyLocation> getRelyList() {
+    List<RelyKeyLocation> list = new ArrayList<>();
+    list.addAll(this.relies);
+    return list;
+  }
+
+  /**
+   * <\alert> this method is actually not proper for DBMS. You need to
+   * design another method and modify the whole frame of the program to
+   * obtain better and more accurate tuples' rely relations.
+   */
+  public List<String> getAttributeValueList(int attributeIndex) {
+    List<String> list = new ArrayList<>();
+    for (String key : this.tuples.keySet()) {
+      Tuple tuple = this.tuples.get(key);
+      list.add(tuple.getAttribute(attributeIndex));
+    }
+    return list;
   }
 
   public Set<String> getTupleKeySet() {

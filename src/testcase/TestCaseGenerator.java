@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import args.Relations;
 import database.Relation;
 import database.RelyKeyLocation;
+import database.Tuple;
 
 /**
  * Unfinished. All logical designs are not definitive.
@@ -40,12 +42,71 @@ public class TestCaseGenerator {
 
   /**
    * Generate test cases under designated directory of a designated
-   * number.
+   * number. Number of relations that rely on others will decrease by 5%
+   * by every dependency.
    * 
    * @param num number of test cases to be generated
    */
   public void generate(int num) {
+    int count = 0;
+    Relation relation = null;
+    List<RelyKeyLocation> relyList = null;
 
+    // VehicleBrand
+    count = (int) (num * this.randNearOne());
+    relation = this.relationMap.get("VehicleBrand");
+    for (int i = 0; i < count; i++) {
+      List<String> attributeList = new ArrayList<>();
+      attributeList.add(this.randNumberString(6));
+      attributeList.add(this.randUppercaseString(6));
+      relation.addTuple(new Tuple(attributeList));
+    }
+
+    // Shop
+    count = (int) (num * this.randNearOne());
+    relation = this.relationMap.get("Shop");
+    for (int i = 0; i < count; i++) {
+      List<String> attributeList = new ArrayList<>();
+      attributeList.add(this.randNumberString(12));
+      relation.addTuple(new Tuple(attributeList));
+    }
+
+    // Manufacturer
+    count = (int) (num * this.randNearOne());
+    relation = this.relationMap.get("Manufacturer");
+    for (int i = 0; i < count; i++) {
+      List<String> attributeList = new ArrayList<>();
+      attributeList.add(this.randNumberString(12));
+      relation.addTuple(new Tuple(attributeList));
+    }
+
+    // WebUser
+    count = (int) (num * this.randNearOne());
+    relation = this.relationMap.get("WebUser");
+    for (int i = 0; i < count; i++) {
+      List<String> attributeList = new ArrayList<>();
+      attributeList.add(this.randNumberString(10));
+      attributeList.add(this.randNumberString(11));
+      relation.addTuple(new Tuple(attributeList));
+    }
+
+    // VehicleType - rely
+    count = (int) (num * this.randNearOne());
+    relation = this.relationMap.get("VehicleType");
+    relyList = relation.getRelyList();
+    for (int i = 0; i < count; i++) {
+      List<String> attributeList = new ArrayList<>();
+      attributeList.add(this.randNumberString(12));
+      relation.addTuple(new Tuple(attributeList));
+    }
+
+    // VehicleTypeShop - rely
+    // Indent - rely
+    // VehicleEvaluation - rely
+    // VehicleBrandManufacture - rely
+    // Works - rely
+    // WorksReply - rely
+    // WorksAboutVehicleBrand - rely
   }
 
   private void initialize() {
@@ -223,6 +284,41 @@ public class TestCaseGenerator {
 
   }
 
+  private String randUppercaseString(int length) {
+    String str = "";
+    Random rand = new Random();
+    for (int i = 0; i < length; i++) {
+      char ch = (char) ('A' + rand.nextInt(26));
+      str = str + ch;
+    }
+    return str;
+  }
+
+  private String randLowercaseString(int length) {
+    String str = "";
+    Random rand = new Random();
+    for (int i = 0; i < length; i++) {
+      char ch = (char) ('a' + rand.nextInt(26));
+      str = str + ch;
+    }
+    return str;
+  }
+
+  private String randNumberString(int length) {
+    String str = "";
+    Random rand = new Random();
+    for (int i = 0; i < length; i++) {
+      char ch = (char) ('0' + rand.nextInt(10));
+      str = str + ch;
+    }
+    return str;
+  }
+
+  private double randNearOne() {
+    Random rand = new Random();
+    return (100 + rand.nextInt(20) - 10) / 100.0;
+  }
+
   /**
    * Create a file under designated directory and use it as path for
    * test case generation.
@@ -242,4 +338,5 @@ public class TestCaseGenerator {
       e.printStackTrace();
     }
   }
+
 }
