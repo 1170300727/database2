@@ -3,8 +3,15 @@ package database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 
 //import com.mysql.jdbc.Connection;
 
@@ -13,7 +20,7 @@ public class database {
   static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
   // 3306/和？之间写数据库名称
   static final String DB_URL =
-      "jdbc:mysql://localhost:3306/product?useSSL=false&serverTimezone=UTC";
+      "jdbc:mysql://localhost:3306/VehicleWebSite?useSSL=false&serverTimezone=UTC";
 
 
   // 数据库的用户名与密码，需要根据自己的设置
@@ -33,28 +40,9 @@ public class database {
 
       // 执行查询
       System.out.println(" 实例化Statement对象...");
-      stmt = conn.createStatement();
-      String sql;
-      sql = "SELECT maker FROM product";
-      ResultSet rs = stmt.executeQuery(sql);
-
-      // 展开结果集数据库
-      while (rs.next()) {
-        // 通过字段检索
-        // int id = rs.getInt("id");
-        String maker = rs.getString("maker");
-        // String url = rs.getString("url");
-
-        // 输出数据
-        // System.out.print("ID: " + id);
-        System.out.print(", 出来吧: " + maker);
-        // System.out.print(", 站点 URL: " + url);
-        System.out.print("\n");
-      }
-      // 完成后关闭
-      rs.close();
-      stmt.close();
-      conn.close();
+      
+      GUI gui = new GUI(conn);
+      //conn.close();
     } catch (SQLException se) {
       // 处理 JDBC 错误
       se.printStackTrace();
@@ -63,20 +51,21 @@ public class database {
       e.printStackTrace();
     } finally {
       // 关闭资源
-      try {
-        if (stmt != null) {
-          stmt.close();
-        }
-      } catch (SQLException se2) {} // 什么都不做
-      try {
-        if (conn != null) {
-          conn.close();
-        }
-      } catch (SQLException se) {
-        se.printStackTrace();
-      }
+//      try {
+//        if (stmt != null) {
+//          stmt.close();
+//        }
+//      } catch (SQLException se2) {} // 什么都不做
+//      try {
+//        if (conn != null) {
+//          conn.close();
+//        }
+//      } catch (SQLException se) {
+//        se.printStackTrace();
+//      }
     }
     System.out.println("Goodbye!");
   }
+
 
 }
