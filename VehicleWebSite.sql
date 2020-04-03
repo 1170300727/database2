@@ -5,11 +5,6 @@ CREATE TABLE VehicleBrand (
 )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
-INSERT INTO VehicleBrand VALUES
-	(1, 'A'),
-	(2, 'B'),
-	(3, 'C')
-;
 
 CREATE TABLE VehicleType (
 	`vehicle_type_id` VARCHAR(45),
@@ -21,13 +16,6 @@ CREATE TABLE VehicleType (
 )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
-INSERT INTO VehicleType VALUES
-	('A123-1', 1, 220, 1),
-	('B324-2', 2, 230, 1),
-	('A123-9', 1, 220, 1),
-	('C8-2', 3, 300, 1),
-	('C0-0', 3, 400, 0)
-;
 
 CREATE INDEX idx_brand_speed_salestatus ON 
 	VehicleType(`vehicle_brand_id`, `vehicle_speed`, `sale_status`);
@@ -41,14 +29,6 @@ CREATE TABLE VehicleColour (
 )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
-INSERT INTO VehicleColour VALUES
-	('A123-1', 'white'),
-	('A123-1', 'black'),
-	('B324-2', 'silver'),
-	('A123-9', 'dark blue'),
-	('C8-2', 'red'),
-	('C0-0', 'sky blue')
-;
 
 CREATE TABLE Shop (
 	`shop_id` VARCHAR(45),
@@ -56,12 +36,6 @@ CREATE TABLE Shop (
 )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
-INSERT INTO Shop VALUES
-	('S-A-1'),
-	('S-B-1'),
-	('S-B-2'),
-	('S-C-1')
-;
 
 CREATE TABLE Manufacturer (
 	`manufacturer_id` VARCHAR(45),
@@ -69,11 +43,6 @@ CREATE TABLE Manufacturer (
 )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
-INSERT INTO Manufacturer VALUES
-	('M-A-1'),
-	('M-B-1'),
-	('M-C-1')
-;
 
 CREATE TABLE WebUser (
 	`user_id` VARCHAR(45),
@@ -82,17 +51,13 @@ CREATE TABLE WebUser (
 )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
-INSERT INTO WebUser VALUES
-	('aaa', '123456789'),
-	('bbb', '987654321')
-;
 
 CREATE TABLE VehicleEvaluation (
 	`evaluation_id` INTEGER AUTO_INCREMENT,
 	`vehicle_type_id` VARCHAR(45) NOT NULL,
 	`user_id` VARCHAR(45) NOT NULL,
 	`shop_id` VARCHAR(45) NOT NULL,
-	`evaluation_date` TIME NOT NULL,
+	`evaluation_date` DATE NOT NULL,
 	`evaluation_content` TEXT NOT NULL,
 	`score` REAL NOT NULL CHECK (`score` >= 0),
 	PRIMARY KEY (`evaluation_id`),
@@ -143,7 +108,7 @@ CREATE TABLE Indent (
 	`user_id` VARCHAR(45) NOT NULL,
 	`shop_id` VARCHAR(45) NOT NULL,
 	`vehicle_type_id` VARCHAR(45) NOT NULL,
-	`indent_date` TIME NOT NULL,
+	`indent_date` DATE NOT NULL,
 	PRIMARY KEY (`indent_id`),
 	FOREIGN KEY (`user_id`) REFERENCES WebUser(`user_id`),
 	FOREIGN KEY (`shop_id`) REFERENCES Shop(`shop_id`),

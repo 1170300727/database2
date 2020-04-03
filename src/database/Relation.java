@@ -50,6 +50,7 @@ public class Relation {
    */
   public int addTuple(Tuple newTuple) {
     if (newTuple.size() != this.attributeNum) {
+      System.out.println(newTuple.toString());
       System.out.println("error: attributes lost when adding a new tuple.");
       return 1;
     } else {
@@ -115,4 +116,13 @@ public class Relation {
     return this.tuples.get(tupleKey);
   }
 
+  @Override
+  public String toString() {
+    String str = this.relationName + "(count: " + this.tuples.size() + ")\n";
+    for (String key : this.tuples.keySet()) {
+      Tuple tuple = this.tuples.get(key);
+      str = str + "\t" + tuple.toString() + "\n";
+    }
+    return str;
+  }
 }
