@@ -15,11 +15,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map; 
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 public class GUI {
   
   private static Statement stmt = null;
   private static Connection conn = null;
+  static int x = 200;
+  static int y = 100;
+  static int width = 100;
+  static int height = 30;
   static Frame frameSearchVehicleType = new Frame("searchVehicleType");
   static Frame UserModel = new Frame("UserModel");
   static Frame frameManufacturerModel = new Frame("ManufacturerModel");
@@ -33,81 +38,27 @@ public class GUI {
   static Frame addVehicleType = new Frame("AddVehicleType");
   static Frame modifyVehicleType = new Frame("ModifyVehicleType");
   static Frame deleteVehicleType = new Frame("DeleteVehicleType");
+  static Frame vehicleWithBestEvaluation = new Frame("VehicleWithBestEvaluation");
+  static Frame logIn = new Frame("LogIn");
   
   public GUI(Connection conn) {
     this.conn = conn;
-    
-    addManufacturer.setBounds(300, 200, 900, 400);
-    addManufacturer.setLayout(null);
-    addManufacturer.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        System.exit(0);
-      }
-    });
-    modifyManufacturer.setBounds(300, 200, 900, 400);
-    modifyManufacturer.setLayout(null);
-    modifyManufacturer.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        System.exit(0);
-      }
-    });
-    deleteManufacturer.setBounds(300, 200, 900, 400);
-    deleteManufacturer.setLayout(null);
-    deleteManufacturer.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        System.exit(0);
-      }
-    });
-    addVehicleBrand.setBounds(300, 200, 900, 400);
-    addVehicleBrand.setLayout(null);
-    addVehicleBrand.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        System.exit(0);
-      }
-    });
-    modifyVehicleBrand.setBounds(300, 200, 900, 400);
-    modifyVehicleBrand.setLayout(null);
-    modifyVehicleBrand.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        System.exit(0);
-      }
-    });
-    deleteVehicleBrand.setBounds(300, 200, 900, 400);
-    deleteVehicleBrand.setLayout(null);
-    deleteVehicleBrand.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        System.exit(0);
-      }
-    });
-    addVehicleType.setBounds(300, 200, 900, 400);
-    addVehicleType.setLayout(null);
-    addVehicleType.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        System.exit(0);
-      }
-    });
-    modifyVehicleType.setBounds(300, 200, 900, 400);
-    modifyVehicleType.setLayout(null);
-    modifyVehicleType.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        System.exit(0);
-      }
-    });
-    deleteVehicleType.setBounds(300, 200, 900, 400);
-    deleteVehicleType.setLayout(null);
-    deleteVehicleType.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        System.exit(0);
-      }
-    });
-    //设置窗体位置、大小
-    frameSearchVehicleType.setBounds(300, 200, 900, 400);
-    menu.setBounds(300, 200, 800, 400);
-    UserModel.setBounds(300, 200, 800, 400);
-    frameManufacturerModel.setBounds(300, 200, 800, 400);
-    menu.setLayout(null);
-    frameManufacturerModel.setLayout(null);
-    //f.setb
+    //AddFrame(menu);
+    AddFrame(frameSearchVehicleType);
+    AddFrame(UserModel);
+    AddFrame(frameManufacturerModel);
+    AddFrame(menu);
+    AddFrame(addManufacturer);
+    AddFrame(modifyManufacturer);
+    AddFrame(deleteManufacturer);
+    AddFrame(addVehicleBrand);
+    AddFrame(modifyVehicleBrand);
+    AddFrame(deleteVehicleBrand);
+    AddFrame(addVehicleType);
+    AddFrame(modifyVehicleType);
+    AddFrame(deleteVehicleType);
+    AddFrame(vehicleWithBestEvaluation);
+    AddFrame(logIn);
     //设置窗体可见
     menu.setVisible(true);
     //调用查询车型窗口
@@ -118,56 +69,134 @@ public class GUI {
     AddManufacturer ();
     DeleteManufacturer ();
     ModifyManufacturer ();
+    AddVehicleType();
+    VehicleWithBestEvaluation();
+    LogIn();
     //点x关闭窗口
-    frameManufacturerModel.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        System.exit(0);
+  }
+
+  private static void VehicleWithBestEvaluation() {  
+    
+    TextField statusText = new TextField();
+    statusText.setBounds(x, y, width, height);
+    vehicleWithBestEvaluation.add(statusText);
+    
+    AddTip("evaluation top:", x - 160, y, width, height, vehicleWithBestEvaluation);
+    
+    //设置文本域
+    TextArea searchArea = new TextArea(10, 40);
+    searchArea.setBounds(x + width + 50, y, 500, 295);
+    searchArea.setEditable(false);
+    vehicleWithBestEvaluation.add(searchArea);
+    
+    Button clear = new Button("clear");
+    AddButton(clear, x - 100, y + 250, width * 2, height, vehicleWithBestEvaluation);
+    clear.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        searchArea.setText(null);
       }
     });
-    menu.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        System.exit(0);
+    
+    Button searchButton = new Button("search");
+    AddButton(searchButton, x - 100, y + 150, width * 2, height, vehicleWithBestEvaluation);
+    searchButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        //获取文本框中内容，出去字符串前后的空格
+        String status = statusText.getText().trim();
+        String sql = "select * from VehicleTypeAVGScore order by avg_score desc limit " + status + ";";
+        System.out.println(sql);
+        ResultSet rs;
+        try {
+          stmt = conn.createStatement();
+          rs = stmt.executeQuery(sql);
+          printResult(rs, searchArea);
+        } catch (SQLException e1) {
+          // TODO Auto-generated catch block
+          String message = e1.getMessage();
+          System.out.println(message);
+          if (message.contains("Unknown column") | message.contains("Undeclared variable") | message.contains("SQL syntax")) {
+            searchArea.append("Input format error\n");
+          }
+          //e1.printStackTrace();
+        }   
       }
     });
-    frameSearchVehicleType.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        System.exit(0);
-      }
-    });
-    UserModel.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        System.exit(0);
+    
+    Button back = new Button("back");
+    AddButton(back, x - 100, y + 200, width * 2, height, vehicleWithBestEvaluation);
+    back.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        vehicleWithBestEvaluation .setVisible(false);
+        UserModel.setVisible(true);
       }
     });
   }
-  // This method is used for menu
-  private static void Menu(Frame menu) {
-    int x = 100;
-    int y = 100;
-    int width = 100;
-    int height = 30;
+  private static void LogIn() {  
     
-    Button userModel = new Button("userModel");
-    Button ManufacturerModel = new Button("ManufacturerModel");
+    TextField statusText = new TextField();
+    statusText.setBounds(x, y, width, height);
+    logIn.add(statusText);
     
-    userModel.setBounds(x, y, width * 2, height);
-    ManufacturerModel.setBounds(x, y + 50, width * 2, height);
+    TextField phone = new TextField();
+    phone.setBounds(x, y + 50, width, height);
+    logIn.add(phone);
     
-    userModel.addActionListener(new ActionListener() {
+    AddTip("user_id:", x - 160, y, width, height, logIn);
+    AddTip("phone:", x - 160, y + 50, width, height, logIn);
+    
+    //设置文本域
+    TextArea searchArea = new TextArea(10, 40);
+    searchArea.setBounds(x + width + 50, y, 500, 295);
+    searchArea.setEditable(false);
+    logIn.add(searchArea);
+    
+    Button clear = new Button("clear");
+    AddButton(clear, x - 100, y + 250, width * 2, height, logIn);
+    clear.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
+        searchArea.setText(null);
+      }
+    });
+    
+    Button searchButton = new Button("logIn");
+    AddButton(searchButton, x - 100, y + 150, width * 2, height, logIn);
+    searchButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        //获取文本框中内容，出去字符串前后的空格
+        String status = statusText.getText().trim();
+        String Phone = phone.getText().trim();
+        String sql = "select * from WebUser where user_id = '" + status + "' and phone = '" + Phone + "';";
+        System.out.println(sql);
+        ResultSet rs;
+        try {
+          stmt = conn.createStatement();
+          rs = stmt.executeQuery(sql);
+          if (rs.next()) {
+            searchArea.append("log in success\n");
+          } else {
+            searchArea.append("Wrong user name or password\n");
+          }
+          //printResult(rs, searchArea);
+        } catch (SQLException e1) {
+          // TODO Auto-generated catch block
+          String message = e1.getMessage();
+          System.out.println(message);
+          if (message.contains("Unknown column") | message.contains("Undeclared variable") | message.contains("SQL syntax")) {
+            searchArea.append("Input format error\n");
+          }
+          //e1.printStackTrace();
+        }   
+      }
+    });
+    
+    Button back = new Button("back");
+    AddButton(back, x - 100, y + 200, width * 2, height, logIn);
+    back.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        logIn .setVisible(false);
         UserModel.setVisible(true);
-        menu.setVisible(false);
       }
     });
-    ManufacturerModel.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        frameManufacturerModel.setVisible(true);
-        menu.setVisible(false);
-      }
-    });
-    menu.setLayout(null);
-    menu.add(userModel);
-    menu.add(ManufacturerModel);
   }
   // This method is used for user to register, search the vehicle type,
   // publish works and so on.
@@ -181,9 +210,28 @@ public class GUI {
     Button Insertion = new Button("Insert");
     Button back = new Button("back");
     
+    
+    Button LogIn = new Button("LogIn");
+    AddButton(LogIn, x + width * 2 + 20, y + 50, width * 2, height,UserModel);
+    LogIn.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        logIn.setVisible(true);
+        UserModel.setVisible(false);
+      }
+    });
+    
+    Button VehicleWithBestEvaluation = new Button("VehicleWithBestEvaluation");
+    AddButton(VehicleWithBestEvaluation, x + width * 2 + 20, y, width * 2, height,UserModel);
     SearchVehicleType.setBounds(x, y, width * 2, height);
     Insertion.setBounds(x, y + 50, width * 2, height);
     back.setBounds(x, y + 100, width * 2, height);
+    
+    VehicleWithBestEvaluation.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        vehicleWithBestEvaluation.setVisible(true);
+        UserModel.setVisible(false);
+      }
+    });
     
     SearchVehicleType.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -260,7 +308,7 @@ public class GUI {
           if (ret == 1) {
             searchArea.append("Modify success\n");
           } else {
-            searchArea.append("Modify failure\n");
+            searchArea.append("Modify failure,please inpute the right ID\n");
           }
         } catch (SQLException e1) {
           // TODO Auto-generated catch block
@@ -440,7 +488,7 @@ public class GUI {
             if (ret == 1) {
               AddArea.append("Delete success\n");
             } else {
-              AddArea.append("Delete failure\n");
+              AddArea.append("Delete failure,please inpute the right ID\n");
             }
             
             //printResult(rs, AddArea);
@@ -467,6 +515,120 @@ public class GUI {
       deleteManufacturer  .add(AddButton);
       deleteManufacturer  .add(AddArea);
     }
+  // This method is used for AddManufacturer.
+  private static void AddVehicleType () {
+  //设置分本框
+    //the position of left-up
+    int x = 200;
+    int y = 100;
+    int width = 100;
+    int height = 30;
+    
+    TextField vehicle_type_id = new TextField();
+    vehicle_type_id.setBounds(x, y, width, height);
+    addVehicleType.add(vehicle_type_id);
+    TextField vehicle_brand_id = new TextField();
+    vehicle_brand_id.setBounds(x, y + 50, width, height);
+    addVehicleType.add(vehicle_brand_id);
+    TextField vehicle_speed = new TextField();
+    vehicle_speed.setBounds(x, y + 100, width, height);
+    addVehicleType.add(vehicle_speed);
+    TextField sale_status = new TextField();
+    sale_status.setBounds(x, y + 150, width, height);
+    addVehicleType.add(sale_status);
+    
+    
+    TextField statusTip = new TextField();
+    statusTip.setBounds(x - 180, y, width + 70, height);
+    statusTip.setEditable(false);
+    statusTip.setText("vehicle_type_id");
+    addVehicleType.add(statusTip);
+    
+    TextField vehicle_brand_idTip = new TextField();
+    vehicle_brand_idTip.setBounds(x - 180, y + 50, width + 70, height);
+    vehicle_brand_idTip.setEditable(false);
+    vehicle_brand_idTip.setText("vehicle_brand_id");
+    addVehicleType.add(vehicle_brand_idTip);
+    
+    TextField vehicle_speedTip = new TextField();
+    vehicle_speedTip.setBounds(x - 180, y + 100, width + 70, height);
+    vehicle_speedTip.setEditable(false);
+    vehicle_speedTip.setText("vehicle_speed");
+    addVehicleType.add(vehicle_speedTip);
+    
+    TextField sale_statusTip = new TextField();
+    sale_statusTip.setBounds(x - 180, y + 150, width + 70, height);
+    sale_statusTip.setEditable(false);
+    sale_statusTip.setText("sale_status");
+    addVehicleType.add(sale_statusTip);
+    
+    //设置文本域
+    TextArea AddArea = new TextArea(10, 40);
+    AddArea.setBounds(x + width + 50, y, 500, 295);
+    AddArea.setEditable(false);
+    
+    //设置按钮
+    Button AddButton = new Button("Add");
+    Button backButton = new Button("back");
+    AddButton.setBounds(x - 100, y + 200, width * 2, height);
+    backButton.setBounds(x - 100, y + 250, width * 2, height);
+    
+    //设置按钮功能
+    AddButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        //获取文本框中内容，出去字符串前后的空格
+        String Vehicle_type_id = vehicle_type_id.getText().trim();
+        String Vehicle_brand_id = vehicle_brand_id.getText().trim();
+        String Vehicle_speed = vehicle_speed.getText().trim();
+        String Sale_status = sale_status.getText().trim();
+        String sql = "INSERT INTO VehicleType VALUES ('" + Vehicle_type_id 
+            + "'," + Vehicle_brand_id + "," + Vehicle_speed + "," + Sale_status + ");";
+        System.out.println(sql);
+        try {
+          stmt = conn.createStatement();     
+          int ret = stmt.executeUpdate (sql);
+          if (ret == 1) {
+            AddArea.append("Add success\n");
+          } else {
+            AddArea.append("Add failure\n");
+          }
+          
+          //printResult(rs, AddArea);
+        } catch (SQLException e1) {
+          // TODO Auto-generated catch block
+          String pattern = "(?<=FOREIGN KEY \\().*?(?=\\))";
+          Pattern p = Pattern.compile(pattern);
+          String exp = e1.getMessage();
+          Matcher m = p.matcher(exp);
+          if (m.find()) {
+            String str2 = m.group();
+            AddArea.append(str2 + " can't satify the foreign key\n");
+          }
+          //String sub = FOREIGN KEY (`vehicle_brand_id`;
+          if (e1.getMessage().substring(0, 9).equals("Duplicate")) {
+            AddArea.append("Duplicate Entry\n");
+          }
+          //e1.printStackTrace();
+        }     
+        
+        //statusText.setText(null);
+        //statusText.requestFocus();
+      }
+    }
+        );
+    backButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        addVehicleType .setVisible(false);
+        frameManufacturerModel.setVisible(true);
+      }
+    });
+    addVehicleType.setLayout(null);
+    
+    addVehicleType.add(backButton);
+    
+    addVehicleType.add(AddButton);
+    addVehicleType.add(AddArea);
+  }
   // This method is used for AddManufacturer.
   private static void AddManufacturer () {
   //设置分本框
@@ -516,7 +678,11 @@ public class GUI {
           //printResult(rs, AddArea);
         } catch (SQLException e1) {
           // TODO Auto-generated catch block
-          e1.printStackTrace();
+          System.out.println(e1.getMessage());
+          if (e1.getMessage().substring(0, 9).equals("Duplicate")) {
+            AddArea.append("Duplicate Entry\n");
+          }
+          //e1.printStackTrace();
         }     
         
         //statusText.setText(null);
@@ -553,6 +719,10 @@ public class GUI {
     TextField lowestSpeedText = new TextField();
     lowestSpeedText.setBounds(x, y + 100, width, height);
     
+    TextField statusInputTip = new TextField();
+    statusInputTip.setBounds(x - 160, y - 50, width + 250, height);
+    statusInputTip.setEditable(false);
+    statusInputTip.setText("status:0-don't sale, 1-ready on sale, 2-on sale");
     TextField statusTip = new TextField();
     statusTip.setBounds(x - 160, y, width + 50, height);
     statusTip.setEditable(false);
@@ -580,6 +750,14 @@ public class GUI {
     searchButton.setBounds(x - 100, y + 150, width * 2, height);
     backButton.setBounds(x - 100, y + 200, width * 2, height);
     
+    Button clear = new Button("clear");
+    clear.setBounds(x - 100, y + 250, width * 2, height);
+    frameSearchVehicleType.add(clear);
+    clear.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        searchArea.setText(null);
+      }
+    });
     //设置按钮功能
     searchButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -597,7 +775,12 @@ public class GUI {
           printResult(rs, searchArea);
         } catch (SQLException e1) {
           // TODO Auto-generated catch block
-          e1.printStackTrace();
+          String message = e1.getMessage();
+          System.out.println(message);
+          if (message.contains("Unknown column")) {
+            searchArea.append("Input format error\n");
+          }
+          //e1.printStackTrace();
         }     
         
         //statusText.setText(null);
@@ -612,7 +795,7 @@ public class GUI {
       }
     });
     frameSearchVehicleType.setLayout(null);
-    
+    frameSearchVehicleType.add(statusInputTip);
     frameSearchVehicleType.add(backButton);
     frameSearchVehicleType.add(statusText);
     frameSearchVehicleType.add(highestSpeedText);
@@ -669,7 +852,56 @@ public class GUI {
     }
     return max;
   }
-
+  private static void AddFrame(Frame f) {
+    f.setBounds(300, 200, 900, 400);
+    f.setLayout(null);
+    f.addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e) {
+        System.exit(0);
+      }
+    });
+  }
+  // This method is used for menu
+  private static void Menu(Frame menu) {
+    int x = 100;
+    int y = 100;
+    int width = 100;
+    int height = 30;
+    
+    Button userModel = new Button("userModel");
+    Button ManufacturerModel = new Button("ManufacturerModel");
+    
+    userModel.setBounds(x, y, width * 2, height);
+    ManufacturerModel.setBounds(x, y + 50, width * 2, height);
+    
+    userModel.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        UserModel.setVisible(true);
+        menu.setVisible(false);
+      }
+    });
+    ManufacturerModel.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        frameManufacturerModel.setVisible(true);
+        menu.setVisible(false);
+      }
+    });
+    menu.setLayout(null);
+    menu.add(userModel);
+    menu.add(ManufacturerModel);
+  }
+  // This method is used for Adding Button and Seting the position and size of Button.
+  private static void AddButton(Button button,int x,int y,int width,int height,Frame f) {
+    button.setBounds(x, y, width, height);
+    f.add(button);
+  }
+  private static void AddTip(String s,int x,int y,int width,int height,Frame f) {
+    TextField statusTip = new TextField();
+    statusTip.setBounds(x, y, width, height);
+    statusTip.setEditable(false);
+    statusTip.setText(s);
+    f.add(statusTip);
+  }
 }
 
 

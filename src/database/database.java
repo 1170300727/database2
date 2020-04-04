@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 //import com.mysql.jdbc.Connection;
@@ -22,12 +24,14 @@ public class database {
   static final String DB_URL =
       "jdbc:mysql://localhost:3306/VehicleWebSite?useSSL=false&serverTimezone=UTC";
 
-
   // 数据库的用户名与密码，需要根据自己的设置
   static final String USER = "root";
   static final String PASS = "5218diandeng";
 
   public static void main(String[] args) {
+    
+
+    
     Connection conn = null;
     Statement stmt = null;
     try {
